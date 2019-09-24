@@ -1,3 +1,0 @@
-﻿tag Receipt
-  check value =~ /pattern/
-  assert value != "foobar"
