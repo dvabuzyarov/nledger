@@ -1,0 +1,3558 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML><HEAD><TITLE>Man page of LEDGER</TITLE>
+</HEAD><BODY>
+<H1>LEDGER</H1>
+Section: User Commands  (1)<BR><A HREF="#index">Index</A>
+<A HREF="/cgi-bin/man/man2html">Return to Main Contents</A><HR>
+<BR>BSD mandoc<BR>
+<A NAME="lbAB">&nbsp;</A>
+<H2>NAME</H2>
+
+
+
+<B>ledger</B>
+
+ - Command-line, double-entry account reporting tool
+
+<A NAME="lbAC">&nbsp;</A>
+<H2>SYNOPSIS</H2>
+
+<B></B>
+
+
+[<I>options</I>
+
+]
+
+[<I>command</I>
+
+]
+
+[<I>arguments</I>
+
+]
+
+<A NAME="lbAD">&nbsp;</A>
+<H2>DESCRIPTION</H2>
+
+<B></B>
+
+
+is a command-line accounting tool based on the power and completeness
+of double-entry accounting.  It is only a reporting tool, which means it never
+modifies your data files, but it does offer a large selection of reports, and
+different ways to customize them to your needs.
+<A NAME="lbAE">&nbsp;</A>
+<H2>COMMANDS</H2>
+
+<B></B>
+
+
+accepts several top-level commands, each of which generates a different
+kind of basic report.  Most of them accept a
+<I>report-query</I>
+
+argument, in order to determine what should be reported.  To understand the
+syntax of a
+<I>report-query</I>
+
+ 
+see the section on
+Sx QUERIES .
+
+In its most basic form, simply specifying one or more strings produces a
+report for all accounts containing those strings.
+<P>
+
+If no command is given,
+<B></B>
+
+
+enters a
+<B>REPL</B>
+
+ 
+or command loop, allowing several commands to be executed on the same
+dataset without reparsing.
+<P>
+
+The following is a complete list of accepted reporting commands:
+<DL COMPACT>
+<P>
+
+<DT><B>accounts </B>[<I>report-query </I>]
+
+
+
+
+
+
+<DD>
+List all accounts for postings that match the
+<I>report-query</I>
+
+ 
+</DL>
+<P>
+
+<DL COMPACT>
+<P>
+
+<DT><B>balance </B>[<I>report-query </I>]
+
+
+
+
+
+
+<DD>
+Print a balance report showing totals for postings that match
+<I>report-query</I>
+
+ 
+and aggregate totals for parents of those accounts.  Options most commonly used
+with this command are:
+<DL COMPACT>
+<P>
+
+<DT><B>--basis (-B</B>
+
+)
+
+
+
+
+<DD>
+Report in terms of cost basis, not amount or value.  This is the only form of
+report which is guaranteed to always balance to zero, when no
+<I>report-query</I>
+
+is specified.
+Only show totals for the top-most accounts.
+<DT><B>--empty (-E</B>
+
+)
+
+
+
+
+<DD>
+Show accounts whose total is zero.
+<DT><B>--flat</B>
+
+
+<DD>
+Rather than display a hierarchical tree, flatten the report to show subtotals
+for only accounts matching
+<I>report-query</I>
+
+ 
+<DT><B>--no-total</B>
+
+
+<DD>
+Suppress the summary total shown at the bottom of the report.
+</DL>
+<P>
+
+<P>
+
+The synonyms
+<B>bal</B>
+
+and
+<B>b</B>
+
+are also accepted.
+<DT><B>budget </B>[<I>report-query </I>]
+
+
+
+
+
+
+<DD>
+A special balance report which includes three extra columns: the amount
+budgeted during the reporting period, how spending differed from the budget,
+and the percentage of budget spent (exceeds 100% if you go over budget).
+Note that budgeting requires one or more
+Do periodic transactions
+
+Dc to be defined in your data file(s).  See the manual for more information.
+
+<DT><B>cleared </B>[<I>report-query </I>]
+
+
+
+
+
+
+<DD>
+A special balance report which adds two extra columns: the cleared balance for
+each account, and the date of the most recent cleared posting in that account.
+For this accounting to be meaningful, the cleared flag must be set on at least
+one posting.  See the manual for more information.
+<DT><B>commodities </B>[<I>report-query </I>]
+
+
+
+
+
+
+<DD>
+List all commodities for postings matching the
+<I>report-query</I>
+
+ 
+<DT><B>convert</B>
+
+
+<DD>
+Reads data from a CSV (comma-separated values) file and generates
+<B></B>
+
+
+transactions.
+<DT><B>csv </B>[<I>report-query </I>]
+
+
+
+
+
+
+<DD>
+Report of postings matching the
+<I>report-query</I>
+
+in CSV format (comma-separated values).  Useful for exporting data to a
+spreadsheet for further analysis or charting.
+<DT><B>entry </B>[<I>entry-template </I>]
+
+
+
+
+
+
+<DD>
+Generate and display a new, properly formatted
+<B></B>
+
+
+transaction by comparing
+the
+<I>entry-template</I>
+
+to the transactions in your data file(s).  For more information on draft
+templates and using this command to quickly create new transactions, see the
+section
+Sx ENTRIES .
+
+<P>
+
+The synonym
+<B>xact</B>
+
+is also accepted.
+<DT><B>emacs </B>[<I>query </I>]
+
+
+
+
+
+
+<DD>
+Output posting and transaction data in a format readily consumed by the Emacs
+editor, in a series of Lisp forms.  This is used by the Emacs ledger-mode to
+process reporting data from
+<B>.</B>
+
+<DT><B>equity </B>[<I>report-query </I>]
+
+
+
+
+
+
+<DD>
+Print a transaction with a series of postings that balance current totals for
+accounts matching the
+<I>report-query</I>
+
+in a special account called
+<B>Equity:Opening Balances</B>
+
+ 
+The purpose of this report is to close the books for a prior year, while using
+these equity postings to carry forward those balances.
+<DT><B>org</B>
+
+
+<DD>
+Produce a journal file suitable for use in the Emacs org mode.
+<DT><B>payees </B>[<I>report-query </I>]
+
+
+
+
+
+
+<DD>
+List all payees for postings matching the
+<I>report-query</I>
+
+ 
+<DT><B>pricemap</B>
+
+
+<DD>
+Produce a file which can be used to generate a graph with graphviz showing
+the relationship of commodities in the
+<B></B>
+
+
+file.
+<DT><B>prices </B>[<I>report-query </I>]
+
+
+
+
+
+
+<DD>
+Report prices for all commodities in postings matching the
+<I>report-query</I>
+
+ 
+The prices are reported with the granularity of a single day.
+<DT><B>pricedb </B>[<I>report-query </I>]
+
+
+
+
+
+
+<DD>
+Report prices for all commodities in postings matching the
+<I>report-query</I>
+
+ 
+Prices are reported down to the second, using the same format as the
+~/.pricedb
+
+file.
+<DT><B>print </B>[<I>report-query </I>]
+
+
+
+
+
+
+<DD>
+Print out the full transactions of any matching postings using the same
+format as they would appear in a data file.  This can be used to extract
+subsets from a
+<B></B>
+
+
+file to transfer to other files.
+<DT><B>push </B>[<I>options </I>]
+
+
+
+
+
+
+<DD>
+In the
+<B>REPL</B>
+
+ 
+push a set of command-line
+<I>options</I>
+
+ 
+so that they will apply to all subsequent reports.
+<DT><B>pop</B>
+
+
+<DD>
+In the
+<B>REPL</B>
+
+ 
+pop any option settings that have been
+
+<B>push</B>
+
+ed.
+
+<DT><B>register </B>[<I>report-query </I>]
+
+
+
+
+
+
+<DD>
+List all postings matching the
+<I>report-query</I>
+
+ 
+This is one of the most common commands, and can be used to provide a variety
+of useful reports.  Options most commonly used
+with this command are:
+<P>
+
+<DL COMPACT>
+<P>
+
+<DT><B>--average (-A</B>
+
+)
+
+
+
+
+<DD>
+Show the running average, rather than a running total.
+<DT><B>--current (-c</B>
+
+)
+
+
+
+
+<DD>
+Don't show postings beyond the present day.
+<DT><B>--exchange </B><I>commodity (-</I><B>X</B>
+
+)
+
+
+
+
+
+
+<DD>
+Render all values in the given
+<I>commodity</I>
+
+ 
+if a price conversion rate can be determined.  Rates are always displayed
+relative to the date of the posting they are calculated for.  This means a
+<B>register</B>
+
+report is a historical value report.  For current values, it may be preferable
+to use the
+<B>balance</B>
+
+report.
+<DT><B>--gain (-G</B>
+
+)
+
+
+
+
+<DD>
+Show any gains (or losses) in commodity values over time.
+<DT><B>--head </B><I>number</I>
+
+
+
+
+<DD>
+Only show the top
+<I>number</I>
+
+postings.
+<DT><B>--historical (-H</B>
+
+)
+
+
+
+
+<DD>
+Value commodities at the time of their acquisition.
+<DT><B>--invert</B>
+
+
+<DD>
+Invert the value of amounts shown.
+<DT><B>--market (-V</B>
+
+)
+
+
+
+
+<DD>
+Show current market values for all amounts.  This is determined in a somewhat
+magical fashion.  It is probably more straightforward to use
+-<B>-exchange</B>
+
+option.
+<DT><B>--period </B><I>time-period (-</I><B>p</B>
+
+)
+
+
+
+
+
+
+<DD>
+Show postings only for the given
+<I>time-period</I>
+
+ 
+<DT><B>--related (-r</B>
+
+)
+
+
+
+
+<DD>
+Show postings that are related to those that would have been shown.  It has
+the effect of displaying the
+Qq other side
+
+of the postings.
+<DT><B>--sort </B><I>value-expression (-</I><B>S</B>
+
+)
+
+
+
+
+
+
+<DD>
+Sort postings by evaluating the given
+<I>value-expression</I>
+
+ 
+Note that a comma-separated list of expressions is allowed, in which case each
+sorting term is used in order to determine the final ordering.  For example,
+to search by date and then amount, one would use:
+
+<BLOCKQUOTE><TT>ledger reg --sort 'date, amount'</TT></BLOCKQUOTE>
+The sort order may be controlled with the '-' sign. For example, to sort in
+reverse chronological order:
+
+<BLOCKQUOTE><TT>ledger reg --sort '-date'</TT></BLOCKQUOTE>
+<DT><B>--tail </B><I>number</I>
+
+
+
+
+<DD>
+Only show the last
+<I>number</I>
+
+postings.
+<DT><B>--uncleared (-U</B>
+
+)
+
+
+
+
+<DD>
+Only show uncleared (i.e., recent) postings.
+</DL>
+<P>
+
+<P>
+
+There are also several grouping options that can be useful:
+<P>
+
+<DL COMPACT>
+<P>
+
+<DT><B>--by-payee (-P</B>
+
+)
+
+
+
+
+<DD>
+Group postings by common payee names.
+<DT><B>--daily (-D</B>
+
+)
+
+
+
+
+<DD>
+Group postings by day.
+<DT><B>--weekly (-W</B>
+
+)
+
+
+
+
+<DD>
+Group postings by week (starting on Sundays).
+<DT><B>--start-of-week </B><I>day</I>
+
+
+
+
+<DD>
+Set the start of each report grouped by week to the given
+<I>day</I>
+
+ 
+<DT><B>--monthly (-M</B>
+
+)
+
+
+
+
+<DD>
+Group postings by month.
+<DT><B>--quarterly</B>
+
+
+<DD>
+Group postings by fiscal quarter.
+<DT><B>--yearly (-Y</B>
+
+)
+
+
+
+
+<DD>
+Group postings by year.
+<DT><B>--days-of-week</B>
+
+
+<DD>
+Group postings by the day of the week on which they took place.
+<DT><B>--subtotal (-s</B>
+
+)
+
+
+
+
+<DD>
+Group all postings together.  This is very similar to the totals shown by the
+<B>balance</B>
+
+report.
+</DL>
+<P>
+
+<P>
+
+The synonyms
+<B>reg</B>
+
+and
+<B>r</B>
+
+are also accepted.
+<DT><B>server</B>
+
+
+<DD>
+This command requires that Python support be active.  If so, it starts up an
+<B>HTTP</B>
+
+server listening for requests on port 9000.  This provides an alternate
+interface to creating and viewing reports.  Note that this is very much a
+work-in-progress, and will not be fully functional until a later version.
+<DT><B>select </B>[<I>sql-query </I>]
+
+
+
+
+
+
+<DD>
+List all postings matching the
+<I>sql-query</I>
+
+ 
+This command allows to generate SQL-like queries, e.g.:
+
+<BLOCKQUOTE><TT></TT><B>ledger select date,amount from posts where account=~/Income/</B>
+
+</BLOCKQUOTE>
+<DT><B>source</B>
+
+
+<DD>
+Parse a journal file and checks it for errors.
+<B></B>
+
+
+will return success
+if no errors are found.
+<DT><B>stats </B>[<I>report-query </I>]
+
+
+
+
+
+
+<DD>
+Provide summary information about all the postings matching
+<I>report-query</I>
+
+ 
+It provides information such as:
+<UL><P>
+
+<LI>
+
+Time range of all matching postings
+<LI>
+
+Unique payees
+<LI>
+
+Unique accounts
+<LI>
+
+Postings total
+<LI>
+
+Uncleared postings
+<LI>
+
+Days since last posting
+<LI>
+
+Posts in the last 7 days
+<LI>
+
+Posts in the last 30 days
+<LI>
+
+Posts this month
+</UL><P>
+
+<DT><B>xml </B>[<I>report-query </I>]
+
+
+
+
+
+
+<DD>
+Output data relating to the current report in
+<B>XML</B>
+
+format.  It includes all
+accounts and commodities involved in the report, plus the postings and the
+transactions they are contained in.  See the manual for more information.
+</DL>
+<P>
+
+<A NAME="lbAF">&nbsp;</A>
+<H2>OPTIONS</H2>
+
+<DL COMPACT>
+<P>
+
+<DT><B>--abbrev-len </B><I>INT</I>
+
+
+
+
+<DD>
+Set the minimum length an account can be abbreviated to if it doesn't
+fit inside the
+<B>account-width</B>
+
+ 
+If
+<I>INT</I>
+
+is zero, then the
+account name will be truncated on the right.  If
+<I>INT</I>
+
+is greater
+than
+<B>account-width</B>
+
+then the account will be truncated on the
+left, with no shortening of the account names in order to fit into the
+desired width.
+<DT><B>--account </B><I>EXPR</I>
+
+
+
+
+<DD>
+Prepend
+<I>EXPR</I>
+
+to all accounts reported.  That is, the option
+-<B>-account </B><I>&quot;'Personal'&quot;</I>
+
+
+
+would tack
+<I>Personal:</I>
+
+and
+-<B>-account </B><I>&quot;tag('VAT')&quot;</I>
+
+
+
+would tack the value of the VAT tag to the beginning of every account
+reported in a
+<B>balance</B>
+
+or
+<B>register</B>
+
+report.
+<DT><B>--account-width </B><I>INT</I>
+
+
+
+
+<DD>
+Set the width of the account column in the
+<B>register</B>
+
+report
+to
+<I>INT</I>
+
+characters.
+<DT><B>--actual (-L</B>
+
+)
+
+
+
+
+<DD>
+Report only real transactions, with no automated or virtual
+transactions used.
+<DT><B>--add-budget</B>
+
+
+<DD>
+Show only un-budgeted postings.
+<DT><B>--amount </B><I>EXPR (-</I><B>t</B>
+
+)
+
+
+
+
+
+
+<DD>
+Apply the given value expression to the posting amount.  Using
+-<B>-amount </B><I>EXPR</I>
+
+
+
+you can apply an
+arbitrary transformation to the postings.
+<DT><B>--amount-data (-j</B>
+
+)
+
+
+
+
+<DD>
+On a register report print only the dates and amount of postings.
+Useful for graphing and spreadsheet applications.
+<DT><B>--amount-width </B><I>INT</I>
+
+
+
+
+<DD>
+Set the width in characters of the amount column in the
+<B>register</B>
+
+report.
+<DT><B>--anon</B>
+
+
+<DD>
+Anonymize registry output, mostly for sending in bug reports.
+<DT><B>--ansi</B>
+
+
+<DD>
+Use color if the terminal supports it.
+Alias for
+-<B>-color</B>
+
+<DT><B>--args-only</B>
+
+
+<DD>
+Ignore init files and environment variables for the
+<B></B>
+
+
+run.
+<DT><B>--auto-match</B>
+
+
+<DD>
+When generating a ledger transaction from a CSV file using the
+<B>convert</B>
+
+command, automatically match an account from the Ledger journal.
+<DT><B>--aux-date</B>
+
+
+<DD>
+Show auxiliary dates for all calculations.
+Alias for
+-<B>-effective</B>
+
+<DT><B>--average (-A</B>
+
+)
+
+
+
+
+<DD>
+Print average values over the number of transactions instead of
+running totals.
+<DT><B>--balance-format </B><I>FMT</I>
+
+
+
+
+<DD>
+Specify the format to use for the
+<B>balance</B>
+
+report.
+<DT><B>--base</B>
+
+
+<DD>
+Reduce convertible commodities down the bottom of the conversion, e.g.
+display time in seconds.
+<DT><B>--basis (-B</B>
+
+)
+
+
+
+
+<DD>
+Report the cost basis on all posting.
+Alias for
+-<B>-cost</B>
+
+<DT><B>--begin </B><I>DATE (-</I><B>b</B>
+
+)
+
+
+
+
+
+
+<DD>
+Specify the start
+<I>DATE</I>
+
+of all calculations.  Transactions before
+that date will be ignored.
+<DT><B>--bold-if </B><I>EXPR</I>
+
+
+
+
+<DD>
+Print the entire line in bold if the given value expression is true.
+<DT><B>--budget</B>
+
+
+<DD>
+Only display budgeted items.  In a
+<B>register</B>
+
+report this displays transaction in the budget, in a balance report this
+displays accounts in the budget.
+<DT><B>--budget-format </B><I>FMT</I>
+
+
+
+
+<DD>
+Specify the format to use for the
+<B>budget</B>
+
+report.
+<DT><B>--by-payee (-P</B>
+
+)
+
+
+
+
+<DD>
+Group postings in the register report by common payee names.
+<DT><B>--check-payees</B>
+
+
+<DD>
+Enable strict and pedantic checking for payees as well as accounts,
+commodities and tags.
+<DT><B>--cleared (-C</B>
+
+)
+
+
+
+
+<DD>
+Display only cleared postings.
+<DT><B>--cleared-format </B><I>FMT</I>
+
+
+
+
+<DD>
+Specify the format to use for the
+<B>cleared</B>
+
+report
+<DT><B>--collapse (-n</B>
+
+)
+
+
+
+
+<DD>
+Print only the top level accounts.
+<DT><B>--collapse-if-zero</B>
+
+
+<DD>
+Collapse the account display only if it has a zero balance.
+<DT><B>--color</B>
+
+
+<DD>
+Use color if the terminal supports it.
+Alias for
+-<B>-ansi</B>
+
+<DT><B>--columns </B><I>INT</I>
+
+
+
+
+<DD>
+Make the
+<B>register</B>
+
+report
+<I>INT</I>
+
+characters wide.  By default
+<B></B>
+
+
+will use all available columns in your terminal.
+<DT><B>--cost</B>
+
+
+<DD>
+Report the cost basis on all posting.
+Alias for
+-<B>-basis</B>
+
+ 
+<DT><B>--count</B>
+
+
+<DD>
+Direct
+<B></B>
+
+
+to report the number of items when appended to the
+<B>commodities</B>
+
+ 
+<B>accounts</B>
+
+or
+<B>payees</B>
+
+commands.
+<DT><B>--csv-format </B><I>FMT</I>
+
+
+
+
+<DD>
+Format
+<B>csv</B>
+
+report
+according to
+<I>FMT</I>
+
+ 
+<DT><B>--current (-c</B>
+
+)
+
+
+
+
+<DD>
+Shorthand for
+-<B>-limit </B><I>'date &lt;= today'</I>
+
+
+
+ 
+<DT><B>--daily (-D</B>
+
+)
+
+
+
+
+<DD>
+Shorthand for
+-<B>-period </B><I>daily</I>
+
+
+
+ 
+<DT><B>--date </B><I>EXPR</I>
+
+
+
+
+<DD>
+Transform the date of the transaction using
+<I>EXPR</I>
+
+ 
+<DT><B>--date-format </B><I>DATEFMT (-</I><B>y</B>
+
+)
+
+
+
+
+
+
+<DD>
+Print dates using
+<I>DATEFMT</I>
+
+ 
+Refer to
+<A HREF="/cgi-bin/man/man2html?3+strftime">strftime</A>(3)
+
+
+for details on the format string syntax.
+<DT><B>--datetime-format </B><I>DATETIMEFMT</I>
+
+
+
+
+<DD>
+Print datetimes using
+<I>DATETIMEFMT</I>
+
+ 
+Refer to
+<A HREF="/cgi-bin/man/man2html?3+strftime">strftime</A>(3)
+
+
+for details on the format string syntax.
+<DT><B>--date-width </B><I>INT</I>
+
+
+
+
+<DD>
+Specify the width, in characters, of the date column in the
+<B>register</B>
+
+report.
+<DT><B>--day-break</B>
+
+
+<DD>
+Break up
+<B>register</B>
+
+report of timelog entries that span multiple days by day.
+<DT><B>--days-of-week</B>
+
+
+<DD>
+Group transactions by the days of the week.
+Alias for
+-<B>-dow</B>
+
+ 
+<DT><B>--dc</B>
+
+
+<DD>
+Display register or balance in debit/credit format If you use
+-<B>-dc</B>
+
+with either the
+<B>register</B>
+
+or
+<B>balance</B>
+
+commands, you will now get separate columns for debits and credits.
+<DT><B>--debug </B><I>STR</I>
+
+
+
+
+<DD>
+If
+<B></B>
+
+
+has been built with debug options this will provide extra
+data during the run.
+<DT><B>--decimal-comma</B>
+
+
+<DD>
+Direct
+<B></B>
+
+
+to parse journals using the European standard comma as
+decimal separator, vice a period.
+<DT><B>--depth </B><I>INT</I>
+
+
+
+
+<DD>
+Limit the depth of the account tree.  In a balance report, for example,
+-<B>-depth </B><I>2</I>
+
+
+
+will print balances only for accounts with two levels, i.e.
+<B>Expenses:Entertainment</B>
+
+but not
+<B>Expenses:Entertainment:Dining</B>
+
+ 
+This is a display predicate, which means it only affects display,
+not the total calculations.
+<DT><B>--detail</B>
+
+
+<DD>
+Related to
+<B>convert</B>
+
+command. Synonym to 
+-<B>-rich-data</B>
+
+option.
+<DT><B>--deviation</B>
+
+
+<DD>
+Report each posting's deviation from the average.  It is only meaningful
+in the
+<B>register and prices</B>
+
+
+
+
+
+reports.
+<DT><B>--display </B><I>EXPR (-</I><B>d</B>
+
+)
+
+
+
+
+
+
+<DD>
+Display lines that satisfy the expression
+<I>EXPR</I>
+
+ 
+<DT><B>--display-amount </B><I>EXPR</I>
+
+
+
+
+<DD>
+Apply a transformation to the
+<I>displayed</I>
+
+amount.  This occurs after
+calculations occur.
+<DT><B>--display-total </B><I>EXPR</I>
+
+
+
+
+<DD>
+Apply a transformation to the
+<I>displayed</I>
+
+total.  This occurs after
+calculations occur.
+<DT><B>--dow</B>
+
+
+<DD>
+Group transactions by the days of the week.
+Alias for
+-<B>-days-of-week</B>
+
+ 
+<DT><B>--download</B>
+
+
+<DD>
+Cause quotes to be automagically downloaded, as needed, by running
+a script named
+<I>getquote</I>
+
+and expecting that script to return
+a value understood by
+<B>.</B>
+
+A sample implementation of a
+<I>getquote</I>
+
+script, implemented in Perl, is provided in the
+distribution.  Downloaded quote price are then appended to the price
+database, usually specified using the environment variable
+<B>LEDGER_PRICE_DB</B>
+
+ 
+<DT><B>--effective</B>
+
+
+<DD>
+Show auxiliary dates for all calculations.  Alias for
+-<B>-aux-date</B>
+
+ 
+<DT><B>--empty (-E</B>
+
+)
+
+
+
+
+<DD>
+Include empty accounts in report.
+<DT><B>--end </B><I>DATE (-</I><B>e</B>
+
+)
+
+
+
+
+
+
+<DD>
+Constrain the report so that transactions on or after
+<I>DATE</I>
+
+are not considered.
+<DT><B>--equity</B>
+
+
+<DD>
+Related to the
+<B>equity</B>
+
+command.  Gives current account balances in the form of a register
+report.
+<DT><B>--exact</B>
+
+
+<DD>
+Report beginning and ending of periods by the date of the first and last
+posting occurring in that period.
+<DT><B>--exchange </B><I>COMMODITY </I>[, <I>COMMODITY, ... (-</I><B>X</B>
+
+)
+
+]
+
+
+
+
+
+
+
+
+<DD>
+Display values in terms of the given
+<I>COMMODITY</I>
+
+ 
+The latest available price is used.
+<DT><B>--explicit</B>
+
+
+<DD>
+Direct
+<B></B>
+
+
+to require pre-declarations for entities (such as accounts,
+commodities and tags) rather than taking entities from cleared
+transactions as defined.
+<DT><B>--file </B><I>FILE</I>
+
+
+
+
+<DD>
+Read journal data from
+<I>FILE</I>
+
+ 
+<DT><B>--first </B><I>INT</I>
+
+
+
+
+<DD>
+Print the first
+<I>INT</I>
+
+entries.  Opposite of
+-<B>-last </B><I>INT</I>
+
+
+
+ 
+Alias for
+-<B>-head</B>
+
+ 
+<DT><B>--flat</B>
+
+
+<DD>
+Force the full names of accounts to be used in the balance report.  The
+balance report will not use an indented tree.
+<DT><B>--force-color</B>
+
+
+<DD>
+Output TTY color codes even if the TTY doesn't support them.  Useful
+for TTYs that don't advertise their capabilities correctly.
+<DT><B>--force-pager</B>
+
+
+<DD>
+Force
+<B></B>
+
+
+to paginate its output.
+<DT><B>--forecast-while </B><I>EXPR</I>
+
+
+
+
+<DD>
+Continue forecasting while
+<I>VEXPR</I>
+
+is true.
+Alias for
+-<B>-forecast</B>
+
+ 
+<DT><B>--forecast-years </B><I>INT</I>
+
+
+
+
+<DD>
+Forecast at most
+<I>INT</I>
+
+years into the future.
+<DT><B>--format </B><I>FMT (-</I><B>F</B>
+
+)
+
+
+
+
+
+
+<DD>
+Use the given format string
+<I>FMT</I>
+
+to print output.
+<DT><B>--gain (-G</B>
+
+)
+
+
+
+
+<DD>
+Report net gain or loss for commodities that have a price history.
+<DT><B>--generated</B>
+
+
+<DD>
+Include auto-generated postings (such as those from automated
+transactions) in the report, in cases where you normally wouldn't want
+them.
+<DT><B>--group-by </B><I>EXPR</I>
+
+
+
+
+<DD>
+Group transaction together in the
+<B>register</B>
+
+report.
+<I>EXPR</I>
+
+can be anything, although most common would be
+<I>payee</I>
+
+or
+<I>commodity</I>
+
+ 
+The
+Fn tag
+
+function is also useful here.
+<DT><B>--group-title-format </B><I>FMT</I>
+
+
+
+
+<DD>
+Set the format for the headers that separate reports section of
+a grouped report.  Only has effect with a
+-<B>-group-by </B><I>EXPR</I>
+
+
+
+register report.
+<DT><B>--head </B><I>INT</I>
+
+
+
+
+<DD>
+Print the first
+<I>INT</I>
+
+entries.  Opposite of
+-<B>-tail </B><I>INT</I>
+
+
+
+ 
+Alias for
+-<B>-first</B>
+
+<DT><B>--help</B>
+
+
+<DD>
+Print this man page.
+<DT><B>--immediate</B>
+
+
+<DD>
+Evaluate calculations immediately rather than lazily.
+<DT><B>--import </B><I>FILE</I>
+
+
+
+
+<DD>
+Import
+<I>FILE</I>
+
+as Python module.
+<DT><B>--init-file </B><I>FILE (-</I><B>i</B>
+
+)
+
+
+
+
+
+
+<DD>
+Read
+<I>FILE</I>
+
+before any other
+<B></B>
+
+
+file.
+This file may not contain any postings, but it may contain option
+settings.  To specify options in the init file, use the same syntax as
+the command-line, but put each option on its own line.
+<DT><B>--inject </B><I>STR</I>
+
+
+
+
+<DD>
+Use
+<I>STR</I>
+
+amounts in calculations.  In case you know
+what amount a transaction should be, but the actual transaction has the
+wrong value you can use metadata
+<I>STR</I>
+
+to specify the expected amount.
+<DT><B>--input-date-format </B><I>DATEFMT</I>
+
+
+
+
+<DD>
+Specify the input date format for journal entries.
+<DT><B>--invert</B>
+
+
+<DD>
+Change the sign of all reported values.
+<DT><B>--last </B><I>INT</I>
+
+
+
+
+<DD>
+ 
+Report only the last
+<I>INT</I>
+
+entries.  Opposite of
+-<B>-first </B><I>INT</I>
+
+
+
+ 
+Only useful on a register report.  Alias for
+-<B>-tail</B>
+
+ 
+<DT><B>--leeway </B><I>INT (-</I><B>Z</B>
+
+)
+
+
+
+
+
+
+<DD>
+Alias for
+-<B>-price-expr</B>
+
+ 
+<DT><B>--limit </B><I>EXPR (-</I><B>l</B>
+
+)
+
+
+
+
+
+
+<DD>
+Limit postings in calculations.
+<DT><B>--lot-dates</B>
+
+
+<DD>
+Report the date on which each commodity in a balance report was
+purchased.
+<DT><B>--lot-notes</B>
+
+
+<DD>
+Report the tag attached to each commodity in a balance report.
+<DT><B>--lot-prices</B>
+
+
+<DD>
+Report the price at which each commodity in a balance report was
+purchased.
+<DT><B>--lots</B>
+
+
+<DD>
+Report the date and price at which each commodity was purchased in
+a balance report.
+<DT><B>--lots-actual</B>
+
+
+<DD>
+Preserve the uniqueness of commodities so they aren't merged during
+reporting without printing the lot annotations.
+<DT><B>--market (-V</B>
+
+)
+
+
+
+
+<DD>
+Use the latest market value for all commodities.
+<DT><B>--master-account </B><I>STR</I>
+
+
+
+
+<DD>
+Prepend all account names with
+<I>STR</I>
+
+<DT><B>--meta </B><I>STR</I>
+
+
+
+
+<DD>
+In the register report, prepend the transaction with the value of the given
+tag
+<I>STR</I>
+
+ 
+<DT><B>--meta-width </B><I>INT</I>
+
+
+
+
+<DD>
+Specify the width of the Meta column used for the
+-<B>-meta </B><I>TAG</I>
+
+
+
+options.
+<DT><B>--monthly (-M</B>
+
+)
+
+
+
+
+<DD>
+Shorthand for
+-<B>-period </B><I>monthly</I>
+
+
+
+ 
+<DT><B>--no-aliases</B>
+
+
+<DD>
+Aliases are completely ignored.
+<DT><B>--no-color</B>
+
+
+<DD>
+Suppress any color TTY output.
+<DT><B>--no-pager</B>
+
+
+<DD>
+Disables the pager on TTY output.
+<DT><B>--no-revalued</B>
+
+
+<DD>
+Stop
+<B></B>
+
+
+from showing
+&lt;Revalued&gt;
+postings.
+<DT><B>--no-rounding</B>
+
+
+<DD>
+Don't output
+Qq Li &lt;Adjustment&gt;
+
+postings.  Note that this will cause the
+running total to often not add up!  Its main use is for
+-<B>-amount-data (-j</B>
+
+)
+
+
+
+and
+-<B>-total-data (-J</B>
+
+)
+
+
+
+reports.
+<DT><B>--no-titles</B>
+
+
+<DD>
+Suppress the output of group titles.
+<DT><B>--no-total</B>
+
+
+<DD>
+Suppress printing the final total line in a balance report.
+<DT><B>--now </B><I>DATE</I>
+
+
+
+
+<DD>
+Use
+<I>DATE</I>
+
+as the current date.  This affects the output when using
+-<B>-period</B>
+
+ 
+-<B>-begin</B>
+
+ 
+-<B>-end</B>
+
+ 
+or
+-<B>-current</B>
+
+to decide which dates lie in the past or future.
+<DT><B>--only </B><I>EXPR</I>
+
+
+
+
+<DD>
+This is a postings predicate that applies after certain transforms have
+been executed, such as periodic gathering.
+<DT><B>--options</B>
+
+
+<DD>
+Display the options in effect for this
+<B></B>
+
+
+invocation, along with
+their values and the source of those values.
+<DT><B>--output </B><I>FILE (-</I><B>o</B>
+
+)
+
+
+
+
+
+
+<DD>
+Redirect the output of
+<B></B>
+
+
+to
+<I>FILE</I>
+
+ 
+<DT><B>--pager </B><I>STR</I>
+
+
+
+
+<DD>
+Use
+<I>STR</I>
+
+as the pager program.
+<DT><B>--payee</B>
+
+
+<DD>
+Sets a value expression for formatting the payee.  In the
+<B>register</B>
+
+report this prevents the second entry from having
+a date and payee for each transaction.
+<DT><B>--payee-width </B><I>INT</I>
+
+
+
+
+<DD>
+Set the number of columns dedicated to the payee in the register
+report to
+<I>INT</I>
+
+ 
+<DT><B>--pedantic</B>
+
+
+<DD>
+Accounts, tags or commodities not previously declared will cause errors.
+<DT><B>--pending</B>
+
+
+<DD>
+Use only postings that are marked pending.
+<DT><B>--percent (-
+
+)
+
+</B>
+
+
+<DD>
+ 
+Calculate the percentage value of each account in a balance reports.
+Only works for account that have a single commodity.
+<DT><B>--period </B><I>PERIOD (-</I><B>p</B>
+
+)
+
+
+
+
+
+
+<DD>
+Define a period expression that sets the time period during which
+transactions are to be accounted.  For a
+<B>register</B>
+
+report only
+the transactions that satisfy the period expression with be displayed.
+For a balance report only those transactions will be accounted in the
+final balances.
+<DT><B>--period-sort</B>
+
+
+<DD>
+Sort the posting within transactions using the given value expression.
+<DT><B>--permissive</B>
+
+
+<DD>
+Quiet balance assertions.
+<DT><B>--pivot </B><I>TAG</I>
+
+
+
+
+<DD>
+Produce a balance pivot report
+Qq around
+
+the given
+<I>TAG</I>
+
+ 
+<DT><B>--plot-amount-format </B><I>FMT</I>
+
+
+
+
+<DD>
+Define the output format for an amount data plot.
+<DT><B>--plot-total-format </B><I>FMT</I>
+
+
+
+
+<DD>
+Define the output format for a total data plot.
+<DT><B>--prepend-format </B><I>FMT</I>
+
+
+
+
+<DD>
+Prepend
+<I>FMT</I>
+
+to every line of the output.
+<DT><B>--prepend-width </B><I>INT</I>
+
+
+
+
+<DD>
+Reserve
+<I>INT</I>
+
+spaces at the beginning of each line of the output.
+<DT><B>--price (-I</B>
+
+)
+
+
+
+
+<DD>
+Use the price of the commodity purchase for performing calculations.
+<DT><B>--price-db </B><I>FILE</I>
+
+
+
+
+<DD>
+<DT><B>--price-exp </B><I>STR (-</I><B>Z</B>
+
+)
+
+
+
+
+
+
+<DD>
+Set the expected freshness of price quotes, in
+<I>INT</I>
+
+minutes.  That
+is, if the last known quote for any commodity is older than this value,
+and if
+-<B>-download</B>
+
+is being used, then the Internet will be
+consulted again for a newer price.  Otherwise, the old price is still
+considered to be fresh enough.
+Alias for
+-<B>-leeway</B>
+
+ 
+<DT><B>--prices-format </B><I>FMT</I>
+
+
+
+
+<DD>
+Set the format for the
+<B>prices</B>
+
+report.
+<DT><B>--pricedb-format </B><I>FMT</I>
+
+
+
+
+<DD>
+Set the format expected for the historical price file.
+<DT><B>--primary-date</B>
+
+
+<DD>
+Show primary dates for all calculations.  Alias for
+-<B>-actual-dates</B>
+
+<DT><B>--quantity (-O</B>
+
+)
+
+
+
+
+<DD>
+Report commodity totals (this is the default).
+<DT><B>--quarterly</B>
+
+
+<DD>
+Shorthand for
+-<B>-period </B><I>quarterly</I>
+
+
+
+ 
+<DT><B>--raw</B>
+
+
+<DD>
+In the
+<B>print</B>
+
+report, show transactions using the exact same syntax as
+specified by the user in their data file.  Don't do any massaging or
+interpreting.  Can be useful for minor cleanups, like just aligning
+amounts.
+<DT><B>--real (-R</B>
+
+)
+
+
+
+
+<DD>
+Account using only real transactions ignoring virtual and automatic
+transactions.
+<DT><B>--recursive-aliases</B>
+
+
+<DD>
+Causes
+<B></B>
+
+
+to try to expand aliases recursively, i.e. try to expand
+the result of an earlier expansion again, until no more expansions apply.
+<DT><B>--register-format </B><I>FMT</I>
+
+
+
+
+<DD>
+Define the output format for the
+<B>register</B>
+
+report.
+<DT><B>--related (-r</B>
+
+)
+
+
+
+
+<DD>
+In a register report show the related account.  This is the other
+<I>side</I>
+
+of the transaction.
+<DT><B>--related-all</B>
+
+
+<DD>
+Show all postings in a transaction, similar to
+-<B>-related</B>
+
+but show both sides of each transaction.
+<DT><B>--revalued</B>
+
+
+<DD>
+Report discrepancy in values for manual reports by inserting
+&lt;Revalued&gt;
+postings.
+This is implied when using
+the
+-<B>-exchange (-X</B>
+
+)
+
+
+
+or
+-<B>-market (-V</B>
+
+)
+
+
+
+option.
+<DT><B>--revalued-only</B>
+
+
+<DD>
+Show only
+&lt;Revalued&gt;
+postings.
+<DT><B>--revalued-total</B>
+
+
+<DD>
+Display the sum of the revalued postings as the running total, which serves
+to show unrealized capital in a gain/losses report.
+<DT><B>--rich-data</B>
+
+
+<DD>
+When generating a ledger transaction from a CSV file using the
+<B>convert</B>
+
+command, add CSV, Imported, and UUID meta-data.
+<DT><B>--seed </B><I>INT</I>
+
+
+
+
+<DD>
+Set the random seed to
+<I>INT</I>
+
+for the
+<B>generate</B>
+
+command.  Used as part of development testing.
+<DT><B>--script </B><I>FILE</I>
+
+
+
+
+<DD>
+Execute a
+<B></B>
+
+
+script.
+<DT><B>--sort </B><I>EXPR (-</I><B>S</B>
+
+)
+
+
+
+
+
+
+<DD>
+Sort the register report based on the value expression
+<I>EXPR</I>
+
+ 
+
+<DT><B>--sort-xacts</B>
+
+
+<DD>
+Sort the posting within transactions using the given value expression.
+<DT><B>--start-of-week </B><I>STR</I>
+
+
+
+
+<DD>
+Use
+<I>STR</I>
+
+as the particular day of the week to start when using the
+-<B>-weekly</B>
+
+option.
+<I>STR</I>
+
+can be day names, their abbreviations like
+Qq Mon ,
+
+or the weekday number
+starting at 0 for Sunday.
+<DT><B>--strict</B>
+
+
+<DD>
+Accounts, tags or commodities not previously declared will cause warnings.
+<DT><B>--subtotal (-s</B>
+
+)
+
+
+
+
+<DD>
+Report register as a single subtotal.
+<DT><B>--tail </B><I>INT</I>
+
+
+
+
+<DD>
+Report only the last
+<I>INT</I>
+
+entries.  Only useful on a register report.  Alias for
+-<B>-last </B><I>INT</I>
+
+
+
+<DT><B>--time-colon</B>
+
+
+<DD>
+Display the value for commodities based on seconds as hours and minutes.
+Thus 8100s will be displayed as 2:15h instead of 2.25h.
+<DT><B>--time-report</B>
+
+
+<DD>
+Add two columns to the
+<B>balance</B>
+
+report to show the earliest checkin and checkout times for timelog entries.
+<DT><B>--total </B><I>EXPR (-</I><B>T</B>
+
+)
+
+
+
+
+
+
+<DD>
+Define a value expression used to calculate the total in reports.
+<DT><B>--total-data (-J</B>
+
+)
+
+
+
+
+<DD>
+Show only dates and totals to format the output for plots.
+<DT><B>--total-width </B><I>INT</I>
+
+
+
+
+<DD>
+Set the width of the total field in the register report.
+<DT><B>--trace </B><I>INT</I>
+
+
+
+
+<DD>
+Enable tracing.  The
+<I>INT</I>
+
+specifies the level of trace desired.
+<DT><B>--truncate </B><I>STR</I>
+
+
+
+
+<DD>
+Indicates how truncation should happen when the contents of columns
+exceed their width.  Valid arguments for
+<I>STR</I>
+
+are
+<I>leading</I>
+
+ 
+<I>middle</I>
+
+ 
+and
+<I>trailing</I>
+
+ 
+The default is smarter than any of these three,
+as it considers sub-names within the account name (that style is
+called
+Qq abbreviate ) .
+
+<DT><B>--unbudgeted</B>
+
+
+<DD>
+Show only un-budgeted postings.
+<DT><B>--uncleared (-U</B>
+
+)
+
+
+
+
+<DD>
+Use only uncleared transactions in calculations and reports.
+<DT><B>--unrealized</B>
+
+
+<DD>
+Show generated unrealized gain and loss accounts in the balance
+report.
+<DT><B>--unrealized-gains</B>
+
+
+<DD>
+Allow the user to specify what account name should be used for
+unrealized gains.  Defaults to
+<B>Equity:Unrealized Gains</B>
+
+ 
+Often set in one's
+~/.ledgerrc
+
+file to change the default.
+<DT><B>--unrealized-losses</B>
+
+
+<DD>
+Allow the user to specify what account name should be used for
+unrealized losses.  Defaults to
+<B>Equity:Unrealized Losses</B>
+
+ 
+Often set in one's
+~/.ledgerrc
+
+file to change the default.
+<DT><B>--unround</B>
+
+
+<DD>
+Perform all calculations without rounding and display results to full
+precision.
+<DT><B>--values</B>
+
+
+<DD>
+Show the values used by each tag when used in combination with the
+<B>tags</B>
+
+command.
+<DT><B>--value-expr </B><I>EXPR</I>
+
+
+
+
+<DD>
+Set a global value expression annotation.
+<DT><B>--verbose</B>
+
+
+<DD>
+Print detailed information on the execution of
+<B>.</B>
+
+<DT><B>--verify</B>
+
+
+<DD>
+Enable additional assertions during run-time.  This causes a significant
+slowdown.  When combined with
+-<B>-debug </B><I>CODE</I>
+
+
+
+<B></B>
+
+
+will produce memory trace information.
+<DT><B>--verify-memory</B>
+
+
+<DD>
+Verify that every constructed object is properly destructed.  This is for
+debugging purposes only.
+<DT><B>--version</B>
+
+
+<DD>
+Print version information and exit.
+<DT><B>--weekly (-W</B>
+
+)
+
+
+
+
+<DD>
+Shorthand for
+-<B>-period </B><I>weekly</I>
+
+
+
+ 
+<DT><B>--wide (-w</B>
+
+)
+
+
+
+
+<DD>
+Assume 132 columns instead of the TTY width.
+<DT><B>--yearly (-Y</B>
+
+)
+
+
+
+
+<DD>
+Shorthand for
+-<B>-period </B><I>yearly</I>
+
+
+
+ 
+</DL>
+<P>
+
+<A NAME="lbAG">&nbsp;</A>
+<H2>PRE-COMMANDS</H2>
+
+Pre-commands are useful when you aren't sure how a command or option
+will work.  The difference between a pre-command and a regular command
+is that pre-commands ignore the journal data file completely, nor is
+the user's init file read.
+<DL COMPACT>
+<P>
+
+<DT><B>args / query</B>
+
+
+
+
+
+
+<DD>
+Evaluate the given arguments and report how
+<B></B>
+
+
+interprets it against the following model transaction:
+
+<BLOCKQUOTE>
+<PRE>
+2004/05/27 Book Store
+    ; This note applies to all postings. :SecondTag:
+    Expenses:Books                 20 BOOK @ $10
+    ; Metadata: Some Value
+    ; Typed:: $100 + $200
+    ; :ExampleTag:
+    ; Here follows a note describing the posting.
+    Liabilities:MasterCard        $-200.00
+</PRE>
+</BLOCKQUOTE>
+
+<DT><B>eval</B>
+
+
+<DD>
+Evaluate the given value expression against the model transaction.
+<DT><B>format</B>
+
+
+<DD>
+Print details of how
+<B></B>
+
+
+uses the given formatting description and
+apply it against a model transaction.
+<DT><B>parse / expr</B>
+
+
+
+
+
+
+<DD>
+Print details of how
+<B></B>
+
+
+uses the given value expression description
+and apply it against a model transaction.
+<DT><B>generate</B>
+
+
+<DD>
+Randomly generates syntactically valid
+<B></B>
+
+
+data from a seed.  Used
+by the GenerateTests harness for development testing.
+<DT><B>period</B>
+
+
+<DD>
+Evaluate the given period and report how
+<B></B>
+
+
+interprets it.
+
+<DT><B>template</B>
+
+
+<DD>
+Shows the insertion template that the
+<B>xact</B>
+
+command generates.  This is a debugging command.
+</DL>
+<P>
+
+<A NAME="lbAH">&nbsp;</A>
+<H2>QUERIES</H2>
+
+The syntax for reporting queries can get somewhat complex.  It is a series of
+query terms with an implicit OR operator between them.  The following terms
+are accepted:
+<DL COMPACT>
+<P>
+
+<DT><B></B><I>regex</I>
+
+
+<DD>
+A bare string is taken as a regular expression matching the full account name.
+Thus, to report the current balance for all assets and liabilities, you would
+use:
+<P>
+
+
+<BLOCKQUOTE><TT>ledger bal asset liab</TT></BLOCKQUOTE>
+<DT><B>payee </B><I>regex (</I><B>@ </B><I>regex</I>
+
+
+
+
+
+)
+
+
+
+
+
+
+<DD>
+Query on the payee, rather than the account.
+<DT><B>tag </B><I>regex (</I><B>% </B><I>regex</I>
+
+
+
+
+
+)
+
+
+
+
+
+
+<DD>
+<DT><B>note </B><I>regex (</I><B>= </B><I>regex</I>
+
+
+
+
+
+)
+
+
+
+
+
+
+<DD>
+Query on anything found in an item's note.
+<DT><B>code </B><I>regex (</I><B># </B><I>regex</I>
+
+
+
+
+
+)
+
+
+
+
+
+
+<DD>
+Query on the xact's optional code (which can be any string the user wishes).
+<DT><B></B><I>term </I><B>and </B><I>term</I>
+
+
+
+
+
+
+<DD>
+Query terms are joined by an implicit OR operator.  You can change this to AND
+by using the
+<B>and</B>
+
+keyword.  For example, to show food expenditures occurring at
+Shakee's Pizza, you could say:
+<P>
+
+
+<BLOCKQUOTE><TT></TT><B>ledger reg food and @Shakee</B>
+
+</BLOCKQUOTE>
+<DT><B></B><I>term </I><B>or </B><I>term</I>
+
+
+
+
+
+
+<DD>
+When you wish to be more explicit, use the OR operator.
+<DT><B>show</B>
+
+
+<DD>
+<DT><B>not </B><I>term</I>
+
+
+
+
+<DD>
+Reverse the logical meaning of the following term.  This can be used with
+parentheses to great effect:
+<P>
+
+
+<BLOCKQUOTE><TT></TT><B>ledger reg food and @Shakee and not dining</B>
+
+</BLOCKQUOTE>
+<DT><B>( </B><I>term </I><B>)</B>
+
+
+
+
+<DD>
+If you wish to mix OR and AND operators, it is often helpful to surround
+logical units with parentheses.  <B>NOTE</B>: Because of the way some shells
+interpret parentheses, you should always escape them:
+<P>
+
+
+<BLOCKQUOTE><TT></TT><B>ledger bal \( assets or liab \) and not food</B>
+
+</BLOCKQUOTE>
+</DL>
+<P>
+
+<A NAME="lbAI">&nbsp;</A>
+<H2>EXPRESSIONS</H2>
+
+<DL COMPACT>
+<P>
+
+<DT><B>Fn </B>abs value
+
+
+<DD>
+Return the absolute value of the given
+<I>value</I>
+
+ 
+<DT><B>account</B>
+
+
+<DD>
+Return the posting's account.
+<DT><B>account_base</B>
+
+
+<DD>
+Return the base account, i.e. everything after the last account delimiter ':'.
+
+<DT><B>actual</B>
+
+
+<DD>
+
+Return true if the transaction is real, i.e not a automated or virtual
+transaction, false otherwise.
+<DT><B>amount</B>
+
+
+<DD>
+Return the amount of the posting.
+<DT><B>amount_expr</B>
+
+
+<DD>
+Return the calculated amount of the posting according to the
+-<B>-amount</B>
+
+option.
+<DT><B>Fn </B>ansify_if value color bool
+
+
+<DD>
+Render the given
+<I>value</I>
+
+as a string, applying the proper ANSI escape codes to display it in the given
+<I>color</I>
+
+if
+<I>bool</I>
+
+is true.  It typically checks the value of the option
+-<B>-color</B>
+
+ 
+for example:
+
+<BLOCKQUOTE><TT></TT><B>ansify_if(amount, blue, options.color)</B>
+
+</BLOCKQUOTE>
+<DT><B>beg_line</B>
+
+
+<DD>
+Line number where entry for posting begins.
+<DT><B>beg_pos</B>
+
+
+<DD>
+Character position where entry for posting begins.
+
+<DT><B>Fn </B>ceiling value
+
+
+<DD>
+Return the next integer of
+<I>value</I>
+
+toward +infinity.
+<DT><B>cleared</B>
+
+
+<DD>
+Return true if the posting was cleared, false otherwise.
+<DT><B>code</B>
+
+
+<DD>
+Return the transaction code, the string between the parenthesis after the date.
+
+<DT><B>Fn </B>commodity value
+
+
+<DD>
+Return the commodity of
+<I>value</I>
+
+or the posting amount when
+<I>value</I>
+
+was not specified.
+
+
+<DT><B>date</B>
+
+
+<DD>
+Return the date of the posting.
+
+
+
+
+<DT><B>end_line</B>
+
+
+<DD>
+Line number where entry for posting ends.
+<DT><B>end_pos</B>
+
+
+<DD>
+Character position where entry for posting ends.
+<DT><B>Fn </B>floor value
+
+
+<DD>
+Return the next integer of
+<I>value</I>
+
+toward -infinity.
+<DT><B>filename</B>
+
+
+<DD>
+The name of the
+<B></B>
+
+
+data file from whence the posting came.
+<DT><B>Fn </B>format string
+
+
+<DD>
+Evaluate
+<I>string</I>
+
+as format just like the
+-<B>-format</B>
+
+option.
+<DT><B>Fn </B>format_date date format
+
+
+<DD>
+Return the
+<I>date</I>
+
+as a string using
+<I>format</I>
+
+ 
+Refer to
+<A HREF="/cgi-bin/man/man2html?3+strftime">strftime</A>(3)
+
+
+for format string details.
+<DT><B>Fn </B>format_datetime datetime format
+
+
+<DD>
+Return the
+<I>datetime</I>
+
+as a string using
+<I>format</I>
+
+ 
+Refer to
+<A HREF="/cgi-bin/man/man2html?3+strftime">strftime</A>(3)
+
+
+for format string details.
+<DT><B>Fn </B>get_at seq index
+
+
+<DD>
+Return value at
+<I>index</I>
+
+from
+<I>seq</I>
+
+ 
+Used internally to construct different reports.
+<DT><B>Fn </B>has_meta
+
+
+<DD>
+Return true if the posting has metadata named
+<I>tag</I>
+
+ 
+false otherwise.
+<DT><B>Fn </B>has_tag tag
+
+
+<DD>
+Return true if the posting has metadata named
+<I>tag</I>
+
+ 
+false otherwise.
+<DT><B>Fn </B>is_seq value
+
+
+<DD>
+Return true if
+<I>value</I>
+
+is a sequence. Used internally.
+<DT><B>Fn </B>join value
+
+
+<DD>
+Replace all newlines in
+<I>value</I>
+
+with
+<B>\n</B>
+
+ 
+<DT><B>Fn </B>justify value first_width latter_width right_justify colorize
+
+
+<DD>
+Right or left justify the string representing
+<I>value</I>
+
+ 
+The width of the field in the first line is given by
+<I>first_width</I>
+
+ 
+For subsequent lines the width is given by
+<I>latter_width</I>
+
+ 
+If
+<I>latter_width</I>
+
+is -1,
+<I>first_width</I>
+
+is used for all lines.
+If
+<I>right_justify</I>
+
+is true then the field is right justified within the width of the field.  If it
+is false, then the field is left justified and padded to the full width of the
+field.  If
+<I>colorize</I>
+
+is true, then ledger will honor color settings.
+<DT><B>Fn </B>market value datetime
+
+
+<DD>
+Return the price of
+<I>value</I>
+
+at
+<I>datetime</I>
+
+ 
+Note that
+<I>datetime</I>
+
+must be surrounded by brackets in order to be parsed correctly, e.g.
+Bq 2012/03/23 .
+
+<DT><B>Fn </B>meta
+
+
+<DD>
+Return the value of metadata named
+<I>name</I>
+
+ 
+<DT><B>note</B>
+
+
+<DD>
+Return the note for the posting.
+<DT><B>now</B>
+
+
+<DD>
+Return the current datetime.
+
+<DT><B>options</B>
+
+
+<DD>
+A variable that allows access to the values of the given command-line options
+using the long option names, e.g. to see whether
+-<B>-daily (-D</B>
+
+)
+
+
+
+was given use
+<B>option.daily</B>
+
+ 
+
+<DT><B>payee</B>
+
+
+<DD>
+Return the payee of the posting.
+<DT><B>Fn </B>percent value_a value_b
+
+
+<DD>
+Return the percentage of
+<I>value_a</I>
+
+in relation to
+<I>value_b</I>
+
+(used as 100%).
+<DT><B>pending</B>
+
+
+<DD>
+Return true if the posting is marked as pending, false otherwise.
+<DT><B>Fn </B>percent value_a value_b
+
+
+<DD>
+Return the percentage of
+<I>value_a</I>
+
+in relation to
+<I>value_b</I>
+
+ 
+
+
+<DT><B>Fn </B>print value
+
+
+<DD>
+Print
+<I>value</I>
+
+to stdout.
+Used internally for debugging.
+<DT><B>Fn </B>quantity value
+
+
+<DD>
+Return the quantity of
+<I>value</I>
+
+for values that have a per-unit cost.
+<DT><B>Fn </B>quoted expression
+
+
+<DD>
+Surround
+<I>expression</I>
+
+with double-quotes.
+<DT><B>Fn </B>quoted_rfc4180 expression
+
+
+<DD>
+Surround
+<I>expression</I>
+
+with double-quotes, compatible with rfc 4180.
+<DT><B>real</B>
+
+
+<DD>
+
+Return true if the transaction is real, i.e not a automated or virtual
+transaction, false otherwise.
+
+<DT><B>Fn </B>roundto value n
+
+
+<DD>
+Return
+<I>value</I>
+
+rounded to
+<I>n</I>
+
+digits.  Does not affect formatting.
+<DT><B>should_bold</B>
+
+
+<DD>
+Return true if expression given to
+-<B>-bold-if</B>
+
+evaluates to true.  Internal use only!
+<DT><B>Fn </B>scrub value
+
+
+<DD>
+Clean
+<I>value</I>
+
+using various transformations such as round,
+stripping value annotations, and more.
+
+<DT><B>Fn </B>strip value
+
+
+<DD>
+Strip value annotation from
+<I>value</I>
+
+ 
+
+<DT><B>Fn </B>tag name
+
+
+<DD>
+Return the value of tag named
+<I>name</I>
+
+ 
+<DT><B>Fn </B>to_amount value
+
+
+<DD>
+Convert
+<I>value</I>
+
+to an amount.  Internal use only!
+<DT><B>Fn </B>to_balance value
+
+
+<DD>
+Convert
+<I>value</I>
+
+to a balance.  Internal use only!
+<DT><B>Fn </B>to_boolean value
+
+
+<DD>
+Convert
+<I>value</I>
+
+to a boolean.  Internal use only!
+<DT><B>Fn </B>to_date value
+
+
+<DD>
+Convert
+<I>value</I>
+
+to a date.  Internal use only!
+<DT><B>Fn </B>to_datetime value
+
+
+<DD>
+Convert
+<I>value</I>
+
+to a datetime.  Internal use only!
+<DT><B>Fn </B>to_int value
+
+
+<DD>
+Return the integer value for
+<I>value</I>
+
+ 
+<DT><B>Fn </B>to_mask value
+
+
+<DD>
+Convert
+<I>value</I>
+
+to a mask.  Internal use only!
+<DT><B>Fn </B>to_sequence value
+
+
+<DD>
+Convert
+<I>value</I>
+
+to a sequence.  Internal use only!
+<DT><B>Fn </B>to_string value
+
+
+<DD>
+Convert
+<I>value</I>
+
+to a character string.
+<DT><B>today</B>
+
+
+<DD>
+Return today's date.
+<DT><B>total</B>
+
+
+<DD>
+Return the total of the posting.
+<DT><B>total_expr</B>
+
+
+<DD>
+Return the calculated total of the posting according to the
+-<B>-total</B>
+
+option.
+<DT><B>Fn </B>trim value
+
+
+<DD>
+Trim leading and trailing whitespace from
+<I>value</I>
+
+ 
+<DT><B>Fn </B>truncated string total_len account_len
+
+
+<DD>
+Truncate
+<I>string</I>
+
+to
+<I>total_len</I>
+
+ensuring that each account is at least
+<I>account_len</I>
+
+long.
+
+<DT><B>virtual</B>
+
+
+<DD>
+Return true if the transaction is virtual, e.g automated, false otherwise.
+
+
+</DL>
+<P>
+
+
+
+<A NAME="lbAJ">&nbsp;</A>
+<H2>DEBUG COMMANDS</H2>
+
+In addition to the regular reporting commands,
+<B></B>
+
+
+also accepts several
+debug commands:
+<DL COMPACT>
+<P>
+
+<DT><B>args </B>[<I>report-query </I>]
+
+
+
+
+
+
+<DD>
+Display complete analysis of how
+<B></B>
+
+
+interpreted the given
+<I>report-query</I>
+
+ 
+Useful if you want to understand how report queries are translated into value
+expressions.
+<DT><B>eval </B>[<I>value-expression </I>]
+
+
+
+
+
+
+<DD>
+Evaluate the given
+<I>value-expression</I>
+
+and prints the result.  For more on value expressions, see the section
+Sx EXPRESSIONS .
+
+<DT><B>format </B>[<I>format-string </I>]
+
+
+
+
+
+
+<DD>
+Display an analysis of how
+<I>format-string</I>
+
+was parsed, and what it would look like applied to a sample transaction.  For
+more on format strings, see the section
+Sx FORMATS .
+
+<DT><B>generate</B>
+
+
+<DD>
+Generate 50 randomly composed yet valid
+<B></B>
+
+
+transactions.
+<DT><B>parse </B>[<I>value-expression </I>]
+
+
+
+
+
+
+<DD>
+Parse the given
+<I>value-expression</I>
+
+and display an analysis of the expression tree and its evaluated value.  For
+more on value expressions, see the section
+Sx EXPRESSIONS .
+
+<DT><B>python </B>[<I>file </I>]
+
+
+
+
+
+
+<DD>
+Invoke a Python interpreter to read the given
+<I>file</I>
+
+ 
+What is special about this is that the
+<B></B>
+
+
+module is builtin, not read from
+disk, so it doesn't require
+<B></B>
+
+
+to be installed anywhere, or the shared
+library variants to be built.
+<DT><B>reload</B>
+
+
+<DD>
+Reload all data files for the current session immediately.
+Can only be used in the
+<B>REPL</B>
+
+ 
+<DT><B>template </B>[<I>draft-template </I>]
+
+
+
+
+
+
+<DD>
+Display information about how
+<I>draft-template</I>
+
+was parsed.  See the section on
+Sx DRAFTS .
+
+</DL>
+<P>
+
+<A NAME="lbAK">&nbsp;</A>
+<H2>ENVIRONMENT</H2>
+
+Every option to
+<B></B>
+
+
+may be set using an environment variable if the option has a long name.
+For example setting the environment variable
+<B>LEDGER_DATE_FORMAT=%d.%m.%Y'</B>
+
+will have the same effect as specifying
+-<B>-date-format </B><I>'%d.%m.%Y'</I>
+
+
+
+on the command-line.  Options on the command-line always take precedence over
+environment variable settings, however.
+<A NAME="lbAL">&nbsp;</A>
+<H2>FILES</H2>
+
+<DL COMPACT>
+<P>
+
+<DT><B>~/.ledgerrc
+
+</B>
+<DD>
+Your personal
+<B></B>
+
+
+initializations.
+</DL>
+<P>
+
+<A NAME="lbAM">&nbsp;</A>
+<H2>SEE ALSO</H2>
+
+<A HREF="/cgi-bin/man/man2html?1+beancount">beancount</A>(1),
+
+
+<A HREF="/cgi-bin/man/man2html?1+hledger">hledger</A>(1)
+
+
+<A NAME="lbAN">&nbsp;</A>
+<H2>AUTHORS</H2>
+
+An John Wiegley
+
+Aq <A HREF="mailto:johnw@newartisans.com">johnw@newartisans.com</A>
+
+
+
+<P>
+
+<HR>
+<A NAME="index">&nbsp;</A><H2>Index</H2>
+<DL>
+<DT><A HREF="#lbAB">NAME</A><DD>
+<DT><A HREF="#lbAC">SYNOPSIS</A><DD>
+<DT><A HREF="#lbAD">DESCRIPTION</A><DD>
+<DT><A HREF="#lbAE">COMMANDS</A><DD>
+<DT><A HREF="#lbAF">OPTIONS</A><DD>
+<DT><A HREF="#lbAG">PRE-COMMANDS</A><DD>
+<DT><A HREF="#lbAH">QUERIES</A><DD>
+<DT><A HREF="#lbAI">EXPRESSIONS</A><DD>
+<DT><A HREF="#lbAJ">DEBUG COMMANDS</A><DD>
+<DT><A HREF="#lbAK">ENVIRONMENT</A><DD>
+<DT><A HREF="#lbAL">FILES</A><DD>
+<DT><A HREF="#lbAM">SEE ALSO</A><DD>
+<DT><A HREF="#lbAN">AUTHORS</A><DD>
+</DL>
+<HR>
+This document was created by
+<A HREF="/cgi-bin/man/man2html">man2html</A>,
+using the manual pages.<BR>
+Time: 18:11:37 GMT, April 17, 2018
+</BODY>
+</HTML>
